@@ -11,6 +11,8 @@ The LUYA sitemap.xml module provides sitemap.xml support for SEO.
 
 Currently it only generates sitemap entries for pages created by the CMS module.
 
+> **Warning: Code is still in experimental state, so use with care!**
+
 ## Installation
 
 For the installation of modules Composer is required.
