@@ -18,7 +18,7 @@ Currently it only generates sitemap entries for pages created by the CMS module.
 For the installation of modules Composer is required.
 
 ```sh
-composer require cebe/luya-module-sitemap:~0.9.0
+composer require cebe/luya-module-sitemap:~0.9.0@alpha
 ```
 
 ### Configuration
