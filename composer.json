@@ -7,5 +7,10 @@
     "require": {
         "luyadev/luya-core": "~1.0.0",
         "samdark/sitemap": "^2.0"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "cebe\\luya\\sitemap\\" : "src/"
+        }
     }
 }
