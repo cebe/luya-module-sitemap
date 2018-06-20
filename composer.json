@@ -12,5 +12,10 @@
         "psr-4" : {
             "cebe\\luya\\sitemap\\" : "src/"
         }
+    },
+    "extra": {
+        "luya" : {
+            "bootstrap": ["cebe\\luya\\sitemap\\Bootstrap"]
+        }
     }
 }
