@@ -29,7 +29,7 @@ final class Bootstrap implements BootstrapInterface
                 if (!$event->sender->request->isConsoleRequest && !$event->sender->request->isAdmin) {
                     $event->sender->urlManager->addRules([
                         ['pattern' => 'sitemap.xml', 'route' => 'sitemap/sitemap/index'],
-                    ]);
+                    ], false);
                 }
             });
         }
