@@ -5,12 +5,19 @@
     "type": "luya-module",
     "license": "BSD-3-Clause",
     "require": {
-        "luyadev/luya-core": "~1.0.0",
+        "luyadev/luya-core" : "~1.0.0",
+        "luyadev/luya-module-cms": "~1.0.0",
         "samdark/sitemap": "^2.0"
+    },
+    "require-dev" : {
+        "luyadev/luya-module-admin" : "dev-master",
+        "luyadev/luya-module-cms" : "dev-master",
+        "luyadev/luya-testsuite" : "~1.0.0"
     },
     "autoload" : {
         "psr-4" : {
-            "cebe\\luya\\sitemap\\" : "src/"
+            "cebe\\luya\\sitemap\\" : "src/",
+            "cebe\\luya\\sitemap\\tests\\" : "tests/"
         }
     },
     "extra": {

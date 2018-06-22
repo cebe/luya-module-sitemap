@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+ <url>
+  <loc>https://luya.io</loc>
+ </url>
+ <url>
+  <loc>https://luya.io/foo</loc>
+  <lastmod>2018-06-22T12:34:38+00:00</lastmod>
+  <xhtml:link rel="alternate" hreflang="en" href="https://luya.io/foo"/>
+ </url>
+</urlset>

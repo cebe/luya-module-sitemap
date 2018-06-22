@@ -16,17 +16,22 @@ use Yii;
  */
 class SitemapController extends Controller
 {
+    /**
+     * Return the sitemap xml content.
+     * 
+     * @return \yii\web\Response
+     */
     public function actionIndex()
     {
         $sitemapFile = Yii::getAlias('@runtime/sitemap.xml');
 
         // update sitemap file as soon as CMS structure changes
         $lastCmsChange = max(NavItem::find()->select(['MAX(timestamp_create) as tc', 'MAX(timestamp_update) as tu'])->asArray()->one());
-
+        
         if (!file_exists($sitemapFile) || filemtime($sitemapFile) < $lastCmsChange) {
             $this->buildSitemapfile($sitemapFile);
         }
-
+        
         return Yii::$app->response->sendFile($sitemapFile, null, [
             'mimeType' => 'text/xml',
             'inline' => true,
@@ -56,6 +61,11 @@ class SitemapController extends Controller
                 'is_offline' => false,
                 'is_draft' => false,
             ])->with(['navItems', 'navItems.lang']);
+            
+            if (!$this->module->withHidden) {
+                $query->andWhere(['is_hidden' => false]);
+            }
+            
             foreach($query->each() as $nav) {
                 /** @var Nav $nav */
 
@@ -66,6 +76,8 @@ class SitemapController extends Controller
                         . Yii::$app->menu->buildItemLink($navItem->alias, $navItem->lang->short_code);
                 }
                 $lastModified = $navItem->timestamp_update == 0 ? $navItem->timestamp_create : $navItem->timestamp_update;
+                
+                var_dump($urls);
                 $sitemap->addItem($urls, $lastModified);
             }
 
