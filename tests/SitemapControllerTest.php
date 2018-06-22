@@ -47,7 +47,7 @@ class SitemapControllerTest extends WebApplicationTestCase
         $response = $ctrl->actionIndex();
         $stream = $response->stream;
         
-        // @TODO: Does not deliver the xml stream content ... 
+        // @TODO: Does not deliver the xml stream content ...
         $content = stream_get_contents($stream[0]);
         
         // @TODO: change content
@@ -108,7 +108,7 @@ class SitemapControllerTest extends WebApplicationTestCase
         ]));
         
         $langFixture = (new ActiveRecordFixture([
-            'modelClass' => Lang::class, 
+            'modelClass' => Lang::class,
             'fixtureData' => [
                 'model1' => [
                     'id' => 1,

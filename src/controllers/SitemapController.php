@@ -18,7 +18,7 @@ class SitemapController extends Controller
 {
     /**
      * Return the sitemap xml content.
-     * 
+     *
      * @return \yii\web\Response
      */
     public function actionIndex()
@@ -66,11 +66,11 @@ class SitemapController extends Controller
                 $query->andWhere(['is_hidden' => false]);
             }
             
-            foreach($query->each() as $nav) {
+            foreach ($query->each() as $nav) {
                 /** @var Nav $nav */
 
                 $urls = [];
-                foreach($nav->navItems as $navItem) {
+                foreach ($nav->navItems as $navItem) {
                     /** @var NavItem $navItem */
                     $urls[$navItem->lang->short_code] = Yii::$app->request->hostInfo
                         . Yii::$app->menu->buildItemLink($navItem->alias, $navItem->lang->short_code);
@@ -80,7 +80,6 @@ class SitemapController extends Controller
                 var_dump($urls);
                 $sitemap->addItem($urls, $lastModified);
             }
-
         }
 
         // write sitemap files
