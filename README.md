@@ -39,7 +39,13 @@ return [
 
 ## Testing
 
-In order to run the unit tests execute:
+In order to run the unit tests install sqlite
+
+```sh
+sudo apt-get install php-sqlite3
+```
+
+and run the tests
 
 ```sh
 ./vendor/bin/phpunit tests/
