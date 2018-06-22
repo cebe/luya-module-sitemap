@@ -36,3 +36,11 @@ return [
 ```
 
 > Please note that the module name *sitemap* is required and should not be changed!
+
+## Testing
+
+In order to run the unit tests execute:
+
+```sh
+./vendor/bin/phpunit tests/
+```

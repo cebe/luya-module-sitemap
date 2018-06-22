@@ -77,7 +77,6 @@ class SitemapController extends Controller
                 }
                 $lastModified = $navItem->timestamp_update == 0 ? $navItem->timestamp_create : $navItem->timestamp_update;
                 
-                var_dump($urls);
                 $sitemap->addItem($urls, $lastModified);
             }
         }
