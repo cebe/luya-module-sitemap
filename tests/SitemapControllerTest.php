@@ -9,6 +9,7 @@ use luya\testsuite\fixtures\ActiveRecordFixture;
 use luya\cms\models\NavItem;
 use luya\cms\models\Nav;
 use luya\admin\models\Lang;
+use yii\helpers\FileHelper;
 
 class SitemapControllerTest extends WebApplicationTestCase
 {
@@ -34,27 +35,52 @@ class SitemapControllerTest extends WebApplicationTestCase
             ]
         ];
     }
+
+    public function boolProvider()
+    {
+        return [
+            [true],
+            [false],
+        ];
+    }
     
-    public function testIgnoreHiddenModuleProperty()
+    public function beforeSetup()
+    {
+        parent::beforeSetup();
+        // clean up application runtime directory, do not use cached version of sitemap.xml
+        $runtimePath = dirname(__DIR__) . '/tests/runtime';
+        FileHelper::removeDirectory($runtimePath);
+        FileHelper::createDirectory($runtimePath);
+    }
+
+    /**
+     * @dataProvider boolProvider
+     */
+    public function testIgnoreHiddenModuleProperty($withHidden)
     {
         $module = new Module('sitemap');
         $module->module = $this->app;
-        $module->withHidden = false;
+        $module->withHidden = $withHidden;
         
         $this->prepareBasicTableStructureAndData();
         
         $ctrl = new SitemapController('sitemap', $module);
         $response = $ctrl->actionIndex();
-        $stream = $response->stream;
-        
-        // @TODO: Does not deliver the xml stream content ...
-        $content = stream_get_contents($stream[0]);
-        
-        // @TODO: change content
-        $this->assertContainsTrimmed('<THIS SHOULD BE EQUALS THE XML CONTENT>', $content);
-        
-        // $module->withHidden = false; = 1 Page in index
-        // $module->withHidden = true; = 2 Pages in index
+        list($handle, $begin, $end) = $response->stream;
+
+        fseek($handle, $begin);
+        $content = stream_get_contents($handle);
+
+        $this->assertContainsTrimmed('<loc>https://luya.io</loc>', $content);
+        $this->assertContainsTrimmed('<loc>https://luya.io/foo</loc>', $content);
+        if ($withHidden) {
+            // $module->withHidden = true; = 2 Pages in index
+            $this->assertContainsTrimmed('<loc>https://luya.io/foo-hidden</loc>', $content);
+        } else {
+            // $module->withHidden = false; = 1 Page in index
+            $this->assertNotContains('<loc>https://luya.io/foo-hidden</loc>', $content);
+        }
+
     }
     
     private function prepareBasicTableStructureAndData()
