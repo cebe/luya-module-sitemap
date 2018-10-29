@@ -17,6 +17,11 @@ use Yii;
 class SitemapController extends Controller
 {
     /**
+     * @var int it's maximum path nesting
+     */
+    private $maxPathNesting = 30;
+    
+    /**
      * Return the sitemap xml content.
      *
      * @return \yii\web\Response
@@ -72,8 +77,10 @@ class SitemapController extends Controller
                 $urls = [];
                 foreach ($nav->navItems as $navItem) {
                     /** @var NavItem $navItem */
+                    $fullUriPath = $this->getRelativeUriByNavItem($navItem);
+
                     $urls[$navItem->lang->short_code] = Yii::$app->request->hostInfo
-                        . Yii::$app->menu->buildItemLink($navItem->alias, $navItem->lang->short_code);
+                        . Yii::$app->menu->buildItemLink($fullUriPath, $navItem->lang->short_code);
                 }
                 $lastModified = $navItem->timestamp_update == 0 ? $navItem->timestamp_create : $navItem->timestamp_update;
                 
@@ -83,5 +90,42 @@ class SitemapController extends Controller
 
         // write sitemap files
         $sitemap->write();
+    }
+    
+    /**
+     * Get full relative URI by NavItem
+     *
+     * @author Robert Kuznetsov <robert@malanka.pro>
+     *
+     * @param NavItem $navItem object
+     *
+     * @return return string
+     */
+    private function getRelativeUriByNavItem($navItem)
+    {
+        $fullUriPath = $navItem->alias;
+        $language = $navItem->lang->short_code;
+        $parentNavId = $navItem->nav->attributes['parent_nav_id'];
+        $nestingIndex = 0;
+        while ($parentNavId) {
+            $parentNav = Nav::find()->where([
+                'is_deleted' => false,
+                'is_offline' => false,
+                'is_draft' => false,
+                'id' => $parentNavId,
+            ])->one();
+
+            $parentNavItem = $parentNav->getActiveLanguageItem()->one();
+            $alias = $parentNavItem->attributes['alias'];
+            $fullUriPath = $alias . '/' . $fullUriPath;
+            $parentNavId = $parentNav->attributes['parent_nav_id'];
+            $nestingIndex += 1;
+            if ($nestingIndex >= $this->maxPathNesting) {
+                // TODO create Exception or other action for notify to customers
+                break;
+            }
+        }
+
+        return $fullUriPath;
     }
 }
