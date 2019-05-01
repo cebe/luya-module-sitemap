@@ -2,12 +2,12 @@
 
 namespace cebe\luya\sitemap\controllers;
 
-use luya\cms\helpers\Url;
+use Yii;
 use luya\cms\models\Nav;
 use luya\cms\models\NavItem;
 use luya\web\Controller;
 use samdark\sitemap\Sitemap;
-use Yii;
+
 
 /**
  * Controller provides sitemap.xml
@@ -72,8 +72,8 @@ class SitemapController extends Controller
                 $urls = [];
                 foreach ($nav->navItems as $navItem) {
                     /** @var NavItem $navItem */
-                    $urls[$navItem->lang->short_code] = Yii::$app->request->hostInfo
-                        . Yii::$app->menu->buildItemLink($navItem->alias, $navItem->lang->short_code);
+                    $url = Yii::$app->request->hostInfo . Yii::$app->menu->buildItemLink($navItem->alias, $navItem->lang->short_code);
+                    $urls[$navItem->lang->short_code] = $this->module->encodeUrls ? $this->encodeUrl($url) : $url;
                 }
                 $lastModified = $navItem->timestamp_update == 0 ? $navItem->timestamp_create : $navItem->timestamp_update;
                 
@@ -83,5 +83,19 @@ class SitemapController extends Controller
 
         // write sitemap files
         $sitemap->write();
+    }
+
+    /**
+     * Encode an URL by using rawurlencode().
+     *
+     * @param string $url This can be either a full url with protocol or just a path.
+     * @return string
+     * @see https://stackoverflow.com/a/7974253/4611030
+     */
+    protected function encodeUrl($url)
+    {
+        return preg_replace_callback('#://([^/]+)/([^?]+)#', function ($match) {
+            return '://' . $match[1] . '/' . join('/', array_map('rawurlencode', explode('/', $match[2])));
+        }, $url);
     }
 }

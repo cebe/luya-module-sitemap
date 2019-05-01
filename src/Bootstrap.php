@@ -2,13 +2,8 @@
 
 namespace cebe\luya\sitemap;
 
-use Yii;
 use yii\base\BootstrapInterface;
-use yii\web\HttpException;
-use luya\web\ErrorHandlerExceptionRenderEvent;
-use luya\cms\models\Config;
 use luya\web\Application;
-use luya\web\ErrorHandler;
 
 /**
  * Sitemap Module Bootstrap.

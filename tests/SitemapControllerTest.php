@@ -80,7 +80,16 @@ class SitemapControllerTest extends WebApplicationTestCase
             // $module->withHidden = false; = 1 Page in index
             $this->assertNotContains('<loc>https://luya.io/foo-hidden</loc>', $content);
         }
+    }
 
+    public function testEncodedUrls()
+    {
+        $ctrl = new SitemapController('sitemap', $this->app);
+        $this->assertSame('https://luya.io/nothing/to/encode', $this->invokeMethod($ctrl, 'encodeUrl', ['https://luya.io/nothing/to/encode']));
+        $this->assertSame('https://luya.io/crazy%20space', $this->invokeMethod($ctrl, 'encodeUrl', ['https://luya.io/crazy space']));
+        $this->assertSame('https://luya.io/?fancy=1&params=2&amp;indeed=3', $this->invokeMethod($ctrl, 'encodeUrl', ['https://luya.io/?fancy=1&params=2&amp;indeed=3']));
+        $this->assertSame('https://luya.io/%C3%A4%C3%B6%C3%BC', $this->invokeMethod($ctrl, 'encodeUrl', ['https://luya.io/äöü']));
+        $this->assertSame('https://japan.com/jp/%E6%96%B0', $this->invokeMethod($ctrl, 'encodeUrl', ['https://japan.com/jp/新']));
     }
     
     private function prepareBasicTableStructureAndData()
