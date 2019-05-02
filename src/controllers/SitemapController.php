@@ -28,11 +28,11 @@ class SitemapController extends Controller
 
         // update sitemap file as soon as CMS structure changes
         $lastCmsChange = max(NavItem::find()->select(['MAX(timestamp_create) as tc', 'MAX(timestamp_update) as tu'])->asArray()->one());
-        
+
         if (!file_exists($sitemapFile) || filemtime($sitemapFile) < $lastCmsChange) {
             $this->buildSitemapfile($sitemapFile);
         }
-        
+
         return Yii::$app->response->sendFile($sitemapFile, null, [
             'mimeType' => 'text/xml',
             'inline' => true,
@@ -62,11 +62,11 @@ class SitemapController extends Controller
                 'is_offline' => false,
                 'is_draft' => false,
             ])->with(['navItems', 'navItems.lang']);
-            
+
             if (!$this->module->withHidden) {
                 $query->andWhere(['is_hidden' => false]);
             }
-            
+
             foreach ($query->each() as $nav) {
                 /** @var Nav $nav */
 
@@ -74,15 +74,15 @@ class SitemapController extends Controller
                 foreach ($nav->navItems as $navItem) {
                     /** @var NavItem $navItem */
 
-					$fullUriPath = $this->getRelativeUriByNavItem($navItem);
+                    $fullUriPath = $this->getRelativeUriByNavItem($navItem);
 
-					$url = Yii::$app->request->hostInfo
-					    . Yii::$app->menu->buildItemLink($fullUriPath, $navItem->lang->short_code);
+                    $url = Yii::$app->request->hostInfo
+                        . Yii::$app->menu->buildItemLink($fullUriPath, $navItem->lang->short_code);
 
-					$urls[$navItem->lang->short_code] = $this->module->encodeUrls ? $this->encodeUrl($url) : $url;
+                    $urls[$navItem->lang->short_code] = $this->module->encodeUrls ? $this->encodeUrl($url) : $url;
                 }
                 $lastModified = $navItem->timestamp_update == 0 ? $navItem->timestamp_create : $navItem->timestamp_update;
-                
+
                 $sitemap->addItem($urls, $lastModified);
             }
         }
@@ -104,7 +104,7 @@ class SitemapController extends Controller
             return '://' . $match[1] . '/' . join('/', array_map('rawurlencode', explode('/', $match[2])));
         }, $url);
     }
-    
+
     /**
      * Get full relative URI by NavItem
      *
