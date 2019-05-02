@@ -31,7 +31,10 @@ class SitemapControllerTest extends WebApplicationTestCase
                 ],
                 'request' => [
                     'hostInfo' => 'https://luya.io',
-                ]
+                ],
+                'adminLanguage' => [
+                    'class' => \luya\admin\components\AdminLanguage::class,
+                ],
             ]
         ];
     }
@@ -43,7 +46,7 @@ class SitemapControllerTest extends WebApplicationTestCase
             [false],
         ];
     }
-    
+
     public function beforeSetup()
     {
         parent::beforeSetup();
@@ -61,9 +64,9 @@ class SitemapControllerTest extends WebApplicationTestCase
         $module = new Module('sitemap');
         $module->module = $this->app;
         $module->withHidden = $withHidden;
-        
+
         $this->prepareBasicTableStructureAndData();
-        
+
         $ctrl = new SitemapController('sitemap', $module);
         $response = $ctrl->actionIndex();
         list($handle, $begin, $end) = $response->stream;
@@ -77,12 +80,15 @@ class SitemapControllerTest extends WebApplicationTestCase
             // $module->withHidden = true; = 2 Pages in index
             $this->assertContainsTrimmed('<loc>https://luya.io/foo-hidden</loc>', $content);
         } else {
+            $this->assertContainsTrimmed('<loc>https://luya.io/foo-3</loc>', $content);
+            $this->assertContainsTrimmed('<loc>https://luya.io/foo-3/foo-4-child</loc>', $content);
+            $this->assertContainsTrimmed('<loc>https://luya.io/foo-3/foo-4-child/foo-5-child-child</loc>', $content);
             // $module->withHidden = false; = 1 Page in index
             $this->assertNotContains('<loc>https://luya.io/foo-hidden</loc>', $content);
         }
 
     }
-    
+
     private function prepareBasicTableStructureAndData()
     {
         $navItemFixture = (new ActiveRecordFixture([
@@ -106,9 +112,36 @@ class SitemapControllerTest extends WebApplicationTestCase
                     'alias' => 'foo-hidden',
                     'title' => 'Bar Hidden',
                 ],
+                'model3' => [
+                    'id' => 3,
+                    'nav_id' => 3,
+                    'lang_id' => 1,
+                    'timestamp_create' => time(),
+                    'timestamp_update' => time(),
+                    'alias' => 'foo-3',
+                    'title' => 'Bar 3 title',
+                ],
+                'model4' => [
+                    'id' => 4,
+                    'nav_id' => 4,
+                    'lang_id' => 1,
+                    'timestamp_create' => time(),
+                    'timestamp_update' => time(),
+                    'alias' => 'foo-4-child',
+                    'title' => 'Bar 4 child-title',
+                ],
+                'model5' => [
+                    'id' => 5,
+                    'nav_id' => 5,
+                    'lang_id' => 1,
+                    'timestamp_create' => time(),
+                    'timestamp_update' => time(),
+                    'alias' => 'foo-5-child-child',
+                    'title' => 'Bar 5 child child title',
+                ],
             ]
         ]));
-        
+
         $navFixture = (new ActiveRecordFixture([
             'modelClass' => Nav::class,
             'fixtureData' => [
@@ -129,10 +162,37 @@ class SitemapControllerTest extends WebApplicationTestCase
                     'is_hidden' => 1,
                     'is_offline' => 0,
                     'is_draft' => 0,
-                ]
+                ],
+                'model3' => [
+                    'id' => 3,
+                    'nav_container_id' => 1,
+                    'parent_nav_id' => 0,
+                    'is_deleted' => 0,
+                    'is_hidden' => 0,
+                    'is_offline' => 0,
+                    'is_draft' => 0,
+                ],
+                'model4' => [
+                    'id' => 4,
+                    'nav_container_id' => 1,
+                    'parent_nav_id' => 3,
+                    'is_deleted' => 0,
+                    'is_hidden' => 0,
+                    'is_offline' => 0,
+                    'is_draft' => 0,
+                ],
+                'model5' => [
+                    'id' => 5,
+                    'nav_container_id' => 1,
+                    'parent_nav_id' => 4,
+                    'is_deleted' => 0,
+                    'is_hidden' => 0,
+                    'is_offline' => 0,
+                    'is_draft' => 0,
+                ],
             ]
         ]));
-        
+
         $langFixture = (new ActiveRecordFixture([
             'modelClass' => Lang::class,
             'fixtureData' => [

@@ -20,7 +20,7 @@ class SitemapController extends Controller
      * @var int it's maximum path nesting
      */
     private $maxPathNesting = 30;
-    
+
     /**
      * Return the sitemap xml content.
      *
@@ -32,11 +32,11 @@ class SitemapController extends Controller
 
         // update sitemap file as soon as CMS structure changes
         $lastCmsChange = max(NavItem::find()->select(['MAX(timestamp_create) as tc', 'MAX(timestamp_update) as tu'])->asArray()->one());
-        
+
         if (!file_exists($sitemapFile) || filemtime($sitemapFile) < $lastCmsChange) {
             $this->buildSitemapfile($sitemapFile);
         }
-        
+
         return Yii::$app->response->sendFile($sitemapFile, null, [
             'mimeType' => 'text/xml',
             'inline' => true,
@@ -66,11 +66,11 @@ class SitemapController extends Controller
                 'is_offline' => false,
                 'is_draft' => false,
             ])->with(['navItems', 'navItems.lang']);
-            
+
             if (!$this->module->withHidden) {
                 $query->andWhere(['is_hidden' => false]);
             }
-            
+
             foreach ($query->each() as $nav) {
                 /** @var Nav $nav */
 
@@ -83,7 +83,7 @@ class SitemapController extends Controller
                         . Yii::$app->menu->buildItemLink($fullUriPath, $navItem->lang->short_code);
                 }
                 $lastModified = $navItem->timestamp_update == 0 ? $navItem->timestamp_create : $navItem->timestamp_update;
-                
+
                 $sitemap->addItem($urls, $lastModified);
             }
         }
@@ -91,7 +91,7 @@ class SitemapController extends Controller
         // write sitemap files
         $sitemap->write();
     }
-    
+
     /**
      * Get full relative URI by NavItem
      *
@@ -114,6 +114,10 @@ class SitemapController extends Controller
                 'is_draft' => false,
                 'id' => $parentNavId,
             ])->one();
+
+            if (!$parentNav) {
+                break;
+            }
 
             $parentNavItem = $parentNav->getActiveLanguageItem()->one();
             $alias = $parentNavItem->attributes['alias'];
