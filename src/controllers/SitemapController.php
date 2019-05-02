@@ -91,6 +91,7 @@ class SitemapController extends Controller
         $sitemap->write();
     }
 
+
     /**
      * Encode an URL by using rawurlencode().
      *
@@ -119,7 +120,6 @@ class SitemapController extends Controller
         $fullUriPath = $navItem->alias;
         $language = $navItem->lang->short_code;
         $parentNavId = $navItem->nav->attributes['parent_nav_id'];
-        $nestingIndex = 0;
         while ($parentNavId) {
             $parentNav = Nav::find()->where([
                 'is_deleted' => false,
@@ -128,15 +128,14 @@ class SitemapController extends Controller
                 'id' => $parentNavId,
             ])->one();
 
+            if (!$parentNav) {
+                break;
+            }
+
             $parentNavItem = $parentNav->getActiveLanguageItem()->one();
             $alias = $parentNavItem->attributes['alias'];
             $fullUriPath = $alias . '/' . $fullUriPath;
             $parentNavId = $parentNav->attributes['parent_nav_id'];
-            $nestingIndex += 1;
-            if ($nestingIndex >= $this->maxPathNesting) {
-                // TODO create Exception or other action for notify to customers
-                break;
-            }
         }
 
         return $fullUriPath;
