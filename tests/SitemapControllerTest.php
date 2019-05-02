@@ -2,6 +2,7 @@
 
 namespace cebe\luya\sitemap\tests;
 
+use luya\cms\models\Config;
 use luya\testsuite\cases\WebApplicationTestCase;
 use cebe\luya\sitemap\Module;
 use cebe\luya\sitemap\controllers\SitemapController;
@@ -86,6 +87,8 @@ class SitemapControllerTest extends WebApplicationTestCase
             // $module->withHidden = false; = 1 Page in index
             $this->assertNotContains('<loc>https://luya.io/foo-hidden</loc>', $content);
         }
+
+        $this->assertNotContains('<loc>https://luya.io/not-to-show-404</loc>', $content);
     }
 
     public function testEncodedUrls()
@@ -148,6 +151,15 @@ class SitemapControllerTest extends WebApplicationTestCase
                     'alias' => 'foo-5-child-child',
                     'title' => 'Bar 5 child child title',
                 ],
+                'model6' => [
+                    'id' => 6,
+                    'nav_id' => 6,
+                    'lang_id' => 1,
+                    'timestamp_create' => time(),
+                    'timestamp_update' => time(),
+                    'alias' => 'not-to-show-404',
+                    'title' => 'Not To Show - 404 - in sitemap',
+                ],
             ]
         ]));
 
@@ -199,6 +211,15 @@ class SitemapControllerTest extends WebApplicationTestCase
                     'is_offline' => 0,
                     'is_draft' => 0,
                 ],
+                'model6' => [
+                    'id' => 6,
+                    'nav_container_id' => 1,
+                    'parent_nav_id' => 0,
+                    'is_deleted' => 0,
+                    'is_hidden' => 0,
+                    'is_offline' => 0,
+                    'is_draft' => 0,
+                ],
             ]
         ]));
 
@@ -211,6 +232,16 @@ class SitemapControllerTest extends WebApplicationTestCase
                     'short_code' => 'en',
                     'is_default' => 1,
                     'is_deleted' => 0,
+                ]
+            ]
+        ]));
+
+        $configFixture = (new ActiveRecordFixture([
+            'modelClass' => Config::class,
+            'fixtureData' => [
+                'model1' => [
+                    'name' => 'httpExceptionNavId',
+                    'value' => 6,
                 ]
             ]
         ]));
