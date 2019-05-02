@@ -2,6 +2,7 @@
 
 namespace cebe\luya\sitemap\controllers;
 
+use luya\cms\models\Config;
 use Yii;
 use luya\cms\helpers\Url;
 use luya\cms\models\Nav;
@@ -70,6 +71,12 @@ class SitemapController extends Controller
             foreach ($query->each() as $nav) {
                 /** @var Nav $nav */
 
+                if ((Config::findOne([
+                    'name' => 'httpExceptionNavId',
+                    'value' => $nav->id]))) {
+                    continue;
+                }
+
                 $urls = [];
                 foreach ($nav->navItems as $navItem) {
                     /** @var NavItem $navItem */
@@ -134,8 +141,13 @@ class SitemapController extends Controller
 
             $parentNavItem = $parentNav->getActiveLanguageItem()->one();
             $alias = $parentNavItem->attributes['alias'];
-            $fullUriPath = $alias . '/' . $fullUriPath;
+            if (!(Config::findOne([
+                'name' => 'httpExceptionNavId',
+                'value' => $parentNav->id]))) {
+                $fullUriPath = $alias . '/' . $fullUriPath;
+            }
             $parentNavId = $parentNav->attributes['parent_nav_id'];
+            unset($parentNav);
         }
 
         return $fullUriPath;
