@@ -97,6 +97,10 @@ class SitemapControllerTest extends WebApplicationTestCase
         }
 
         $this->assertNotContains('<loc>https://luya.io/not-to-show-404</loc>', $content);
+
+        $this->assertNotContains('<loc>https://luya.io/publish-check-past</loc>', $content);
+        $this->assertNotContains('<loc>https://luya.io/publish-check-future</loc>', $content);
+        $this->assertContainsTrimmed('<loc>https://luya.io/publish-check-present</loc>', $content);
     }
 
     public function testEncodedUrls()
@@ -186,6 +190,33 @@ class SitemapControllerTest extends WebApplicationTestCase
                     'alias' => 'foo-4-child-de',
                     'title' => 'Bar 4 child-title de',
                 ],
+                'model7' => [
+                    'id' => 9,
+                    'nav_id' => 7,
+                    'lang_id' => 1,
+                    'timestamp_create' => time(),
+                    'timestamp_update' => time(),
+                    'alias' => 'publish-check-past',
+                    'title' => 'Publish Checked Past',
+                ],
+                'model8' => [
+                    'id' => 10,
+                    'nav_id' => 8,
+                    'lang_id' => 1,
+                    'timestamp_create' => time(),
+                    'timestamp_update' => time(),
+                    'alias' => 'publish-check-present',
+                    'title' => 'Publish Checked Present',
+                ],
+                'model9' => [
+                    'id' => 11,
+                    'nav_id' => 9,
+                    'lang_id' => 1,
+                    'timestamp_create' => time(),
+                    'timestamp_update' => time(),
+                    'alias' => 'publish-check-future',
+                    'title' => 'Publish Checked Future',
+                ],
             ]
         ]));
 
@@ -245,6 +276,39 @@ class SitemapControllerTest extends WebApplicationTestCase
                     'is_hidden' => 0,
                     'is_offline' => 0,
                     'is_draft' => 0,
+                ],
+                'model7' => [ // past : current time - some time : should not be in sitemap.xml
+                    'id' => 7,
+                    'nav_container_id' => 1,
+                    'parent_nav_id' => 0,
+                    'is_deleted' => 0,
+                    'is_hidden' => 0,
+                    'is_offline' => 0,
+                    'is_draft' => 0,
+                    'publish_from' => 1528309800, // 07.06.2018
+                    'publish_till' => 1544121000, // 07.12.2018
+                ],
+                'model8' => [ //  current : should be in sitemap.xml
+                    'id' => 8,
+                    'nav_container_id' => 1,
+                    'parent_nav_id' => 0,
+                    'is_deleted' => 0,
+                    'is_hidden' => 0,
+                    'is_offline' => 0,
+                    'is_draft' => 0,
+                    'publish_from' => time(),
+                    'publish_till' => time() + 10000,
+                ],
+                'model9' => [ //  future : should not be in sitemap.xml
+                    'id' => 9,
+                    'nav_container_id' => 1,
+                    'parent_nav_id' => 0,
+                    'is_deleted' => 0,
+                    'is_hidden' => 0,
+                    'is_offline' => 0,
+                    'is_draft' => 0,
+                    'publish_from' => time() + 20000,
+                    'publish_till' => time() + 50000,
                 ],
             ]
         ]));

@@ -154,7 +154,7 @@ class SitemapController extends Controller
                 'is_offline' => false,
                 'is_draft' => false
             ])
-            ->andWhere(['or', ['publish_from' => null], ['<=', 'publish_from', new Expression('UNIX_TIMESTAMP()')]])
-            ->andWhere(['or', ['publish_till' => null], ['>=', 'publish_till', new Expression('UNIX_TIMESTAMP()')]]);
+            ->andWhere(['or', ['publish_from' => null], ['<=', 'publish_from', time()]])
+            ->andWhere(['or', ['publish_till' => null], ['>=', 'publish_till', time()]]);
     }
 }
