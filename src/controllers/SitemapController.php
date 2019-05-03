@@ -7,7 +7,6 @@
 
 namespace cebe\luya\sitemap\controllers;
 
-use yii\db\Expression;
 use luya\cms\models\Config;
 use Yii;
 use luya\cms\helpers\Url;
@@ -59,7 +58,7 @@ class SitemapController extends Controller
 
         // add luya CMS pages
         if ($this->module->module->hasModule('cms')) {
-            $query = $this->getBasicQuery()->with(['navItems', 'navItems.lang']);
+            $query = $this->getBaseQuery()->with(['navItems', 'navItems.lang']);
 
             if (!$this->module->withHidden) {
                 $query->andWhere(['is_hidden' => false]);
@@ -126,7 +125,7 @@ class SitemapController extends Controller
         $language = $navItem->lang->short_code;
         $parentNavId = $navItem->nav->attributes['parent_nav_id'];
         while ($parentNavId) {
-            $parentNav = $this->getBasicQuery()->andWhere(['id' => $parentNavId])->one();
+            $parentNav = $this->getBaseQuery()->andWhere(['id' => $parentNavId])->one();
 
             if (!$parentNav) {
                 break;
@@ -147,7 +146,7 @@ class SitemapController extends Controller
      * Common query building part
      * @return \yii\db\ActiveQuery
      */
-    private function getBasicQuery()
+    private function getBaseQuery()
     {
         return Nav::find()->where([
                 'is_deleted' => false,
