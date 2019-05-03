@@ -71,9 +71,7 @@ class SitemapController extends Controller
             foreach ($query->each() as $nav) {
                 /** @var Nav $nav */
 
-                if ((Config::findOne([
-                    'name' => 'httpExceptionNavId',
-                    'value' => $nav->id]))) {
+                if ((static::checkPageIs404($nav))) {
                     continue;
                 }
 
@@ -141,9 +139,7 @@ class SitemapController extends Controller
 
             $parentNavItem = $parentNav->getActiveLanguageItem()->one();
             $alias = $parentNavItem->attributes['alias'];
-            if (!(Config::findOne([
-                'name' => 'httpExceptionNavId',
-                'value' => $parentNav->id]))) {
+            if (!(static::checkPageIs404($parentNav))) {
                 $fullUriPath = $alias . '/' . $fullUriPath;
             }
             $parentNavId = $parentNav->attributes['parent_nav_id'];
@@ -151,5 +147,18 @@ class SitemapController extends Controller
         }
 
         return $fullUriPath;
+    }
+
+    /**
+     * Check the page is 404, if it is, exclude it from sitemap.xml
+     * @param  Nav    $parentNav
+     * @return Config|null
+     */
+    public static function checkPageIs404(Nav $parentNav)
+    {
+        return Config::findOne([
+            'name' => Config::HTTP_EXCEPTION_NAV_ID,
+            'value' => $parentNav->id
+        ]);
     }
 }
