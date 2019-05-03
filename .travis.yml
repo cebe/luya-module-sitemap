@@ -12,14 +12,7 @@ matrix:
   allow_failures:
     - php: nightly
 
-install: |
-    if [[ $TRAVIS_PHP_VERSION = "7.3" ]]; then \
-       composer global require "fxp/composer-asset-plugin:~1.4"; \
-       composer remove friendsofphp/php-cs-fixer --dev --no-update ; \
-       composer update ; \
-    else \
-      make install; \
-    fi
+install: make install
 script:
   - make test
   - if [[ $TRAVIS_PHP_VERSION = "7.2" ]]; then make check-style; fi

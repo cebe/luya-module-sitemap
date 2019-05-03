@@ -33,6 +33,11 @@
 			"cebe\\luya\\sitemap\\tests\\" : "tests/"
 		}
 	},
+	"config": {
+		"platform": {
+			"php": "7.0.8"
+		}
+	},
 	"extra": {
 		"luya" : {
 			"bootstrap": ["cebe\\luya\\sitemap\\Bootstrap"]
