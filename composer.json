@@ -4,12 +4,27 @@
     "keywords": ["luya", "sitemap", "sitemap.xml", "seo"],
     "type": "luya-module",
     "license": "BSD-3-Clause",
+	"homepage": "https://github.com/cebe/luya-module-sitemap#readme",
+	"authors": [
+		{
+			"name": "Carsten Brandt",
+			"email": "mail@cebe.cc",
+			"homepage": "https://cebe.cc/",
+			"role": "Creator"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/cebe/luya-module-sitemap/issues",
+		"source": "https://github.com/cebe/luya-module-sitemap"
+	},
     "require": {
         "luyadev/luya-core" : "^1.0",
         "luyadev/luya-module-cms": "^1.0",
         "samdark/sitemap": "^2.0"
     },
     "require-dev" : {
+        "cebe/indent": "*",
+        "friendsofphp/php-cs-fixer": "~2.13.1",
         "luyadev/luya-testsuite" : "^1.0"
     },
     "autoload" : {
@@ -18,14 +33,12 @@
             "cebe\\luya\\sitemap\\tests\\" : "tests/"
         }
     },
-    "config": {
-        "platform": {
-            "php": "7.0"
-        }
-    },
     "extra": {
         "luya" : {
             "bootstrap": ["cebe\\luya\\sitemap\\Bootstrap"]
-        }
-    }
+        },
+		"branch-alias": {
+			"dev-master": "1.0.x-dev"
+		}
+	}
 }

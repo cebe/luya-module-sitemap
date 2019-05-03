@@ -2,6 +2,7 @@
 /.buildpath
 /.project
 /.settings
+/.php_cs.cache
 /luya
 
 /tests/runtime

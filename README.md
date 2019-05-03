@@ -5,6 +5,9 @@
 # LUYA sitemap.xml Module
 
 
+[![Latest Stable Version](https://poser.pugx.org/cebe/luya-module-sitemap/v/stable)](https://packagist.org/packages/cebe/luya-module-sitemap)
+[![Build Status](https://travis-ci.org/cebe/luya-module-sitemap.svg?branch=master)](https://travis-ci.org/cebe/luya-module-sitemap)
+[![License](https://poser.pugx.org/cebe/luya-module-sitemap/license)](https://packagist.org/packages/cebe/luya-module-sitemap)
 [![LUYA](https://img.shields.io/badge/Powered%20by-LUYA-brightgreen.svg)](https://luya.io)
 
 The LUYA sitemap.xml module provides sitemap.xml support for SEO.

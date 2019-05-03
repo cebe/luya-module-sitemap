@@ -1,0 +1,20 @@
+language: php
+
+php:
+  - '5.4'
+  - '5.5'
+  - '5.6'
+  - '7.1'
+  - '7.2'
+  - '7.3'
+  - nightly
+
+matrix:
+  # allow php nightly to fail until https://travis-ci.community/t/php-nightly-now-requires-oniguruma/2237 is fixed
+  allow_failures:
+    - php: nightly
+
+install: make install
+script:
+  - make test
+  - if [[ $TRAVIS_PHP_VERSION = "7.3" || $TRAVIS_PHP_VERSION = "nightly" ]]; then true; else make check-style; fi
