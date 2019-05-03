@@ -11,15 +11,12 @@ The LUYA sitemap.xml module provides sitemap.xml support for SEO.
 
 Currently it only generates sitemap entries for pages created by the CMS module.
 
-> **Warning: Code is still in experimental state, so use with care!**
 
 ## Installation
 
 For the installation of modules Composer is required.
 
-```sh
-composer require cebe/luya-module-sitemap:~0.9.0@alpha
-```
+    composer require cebe/luya-module-sitemap
 
 ### Configuration
 
@@ -29,7 +26,16 @@ Add the frontend module of the sitemap module to your configuration modules sect
 return [
     'modules' => [
         // ...
-        'sitemap' => cebe\luya\sitemap\Module::class,
+        'sitemap' => [
+            'class' => cebe\luya\sitemap\Module::class,
+            // available configuration options:
+
+            // include hidden pages in sitemap.xml, default=false
+            //'withHidden' => true,
+
+            // encode urls in sitemap.xml, default=true
+            //'encodeUrls' => true,
+        ],
         // ...
     ],
 ];
@@ -37,7 +43,7 @@ return [
 
 > Please note that the module name *sitemap* is required and should not be changed!
 
-## Testing
+## Development & Testing
 
 In order to run the unit tests install sqlite
 
@@ -50,3 +56,11 @@ and run the tests
 ```sh
 ./vendor/bin/phpunit tests/
 ```
+
+## Support
+
+Professional support, consulting as well as software development services are available:
+
+https://www.cebe.cc/en/contact
+
+Development of this library is sponsored by [cebe.:cloud: "Your Professional Deployment Platform"](https://cebe.cloud).
