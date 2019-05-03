@@ -14,7 +14,7 @@ matrix:
   allow_failures:
     - php: nightly
 
-install: if [[ $TRAVIS_PHP_VERSION = "5.4" || $TRAVIS_PHP_VERSION = "5.5" || $TRAVIS_PHP_VERSION = "5.6" || $TRAVIS_PHP_VERSION = "7.3" ]]; then composer remove friendsofphp/php-cs-fixer --no-update ; composer update ; else make install; fi
+install: if [[ $TRAVIS_PHP_VERSION = "5.4" || $TRAVIS_PHP_VERSION = "5.5" || $TRAVIS_PHP_VERSION = "5.6" || $TRAVIS_PHP_VERSION = "7.3" ]]; then composer remove friendsofphp/php-cs-fixer --dev --no-update ; composer update ; else make install; fi
 script:
   - make test
   - if [[ $TRAVIS_PHP_VERSION = "7.2" ]]; then make check-style; fi
