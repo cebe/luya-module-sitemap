@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @copyright Copyright (c) 2019 Carsten Brandt <mail@cebe.cc> and contributors
+ * @license https://github.com/cebe/luya-module-sitemap/blob/master/LICENSE.md
+ */
+
 namespace cebe\luya\sitemap;
 
 use yii\base\BootstrapInterface;
@@ -10,7 +15,6 @@ use luya\web\Application;
  *
  * The Sitemap bootstrap class injects url rules for sitemap.xml
  *
- * @author Carsten Brandt <mail@cebe.cc>
  */
 final class Bootstrap implements BootstrapInterface
 {

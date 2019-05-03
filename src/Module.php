@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @copyright Copyright (c) 2019 Carsten Brandt <mail@cebe.cc> and contributors
+ * @license https://github.com/cebe/luya-module-sitemap/blob/master/LICENSE.md
+ */
+
 namespace cebe\luya\sitemap;
 
 use luya\base\CoreModuleInterface;
@@ -7,7 +12,6 @@ use luya\base\CoreModuleInterface;
 /**
  * Sitemap Module.
  *
- * @author Carsten Brandt <mail@cebe.cc>
  */
 final class Module extends \luya\base\Module implements CoreModuleInterface
 {

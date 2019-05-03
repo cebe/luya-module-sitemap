@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @copyright Copyright (c) 2019 Carsten Brandt <mail@cebe.cc> and contributors
+ * @license https://github.com/cebe/luya-module-sitemap/blob/master/LICENSE.md
+ */
+
 namespace cebe\luya\sitemap\controllers;
 
 use luya\cms\models\Config;
@@ -9,7 +14,6 @@ use luya\cms\models\Nav;
 use luya\cms\models\NavItem;
 use luya\web\Controller;
 use samdark\sitemap\Sitemap;
-
 
 /**
  * Controller provides sitemap.xml
