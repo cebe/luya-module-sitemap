@@ -13,8 +13,6 @@ use samdark\sitemap\Sitemap;
 
 /**
  * Controller provides sitemap.xml
- *
- * @author Carsten Brandt <mail@cebe.cc>
  */
 class SitemapController extends Controller
 {
@@ -83,7 +81,7 @@ class SitemapController extends Controller
                 foreach ($nav->navItems as $navItem) {
                     /** @var NavItem $navItem */
 
-                    $fullUriPath = $this->getRelativeUriByNavItem($navItem);
+                    $fullUriPath = $this->getRelativeUriByNavItem($navItem, [$errorPageId]);
 
                     $url = Yii::$app->request->hostInfo
                         . Yii::$app->menu->buildItemLink($fullUriPath, $navItem->lang->short_code);
@@ -118,13 +116,12 @@ class SitemapController extends Controller
     /**
      * Get full relative URI by NavItem
      *
-     * @author Robert Kuznetsov <robert@malanka.pro>
-     *
      * @param NavItem $navItem object
+     * @param int[] $ignoreNavIds nav ids to ignore
      *
      * @return return string
      */
-    private function getRelativeUriByNavItem($navItem)
+    private function getRelativeUriByNavItem($navItem, $ignoreNavIds)
     {
         $fullUriPath = $navItem->alias;
         $language = $navItem->lang->short_code;
@@ -141,15 +138,12 @@ class SitemapController extends Controller
                 break;
             }
 
-            $parentNavItem = $parentNav->getActiveLanguageItem()->one();
+            $parentNavItem = $parentNav->getNavItems()->andWhere(['lang_id' => $navItem->lang_id])->one();
             $alias = $parentNavItem->attributes['alias'];
-            if (!(Config::findOne([
-                'name' => 'httpExceptionNavId',
-                'value' => $parentNav->id]))) {
+            if (!in_array($parentNav->id, $ignoreNavIds)) {
                 $fullUriPath = $alias . '/' . $fullUriPath;
             }
             $parentNavId = $parentNav->attributes['parent_nav_id'];
-            unset($parentNav);
         }
 
         return $fullUriPath;

@@ -77,13 +77,21 @@ class SitemapControllerTest extends WebApplicationTestCase
 
         $this->assertContainsTrimmed('<loc>https://luya.io</loc>', $content);
         $this->assertContainsTrimmed('<loc>https://luya.io/foo</loc>', $content);
+
+        $this->assertContainsTrimmed('<loc>https://luya.io/foo-3</loc>', $content);
+        $this->assertContainsTrimmed('<loc>https://luya.io/foo-3/foo-4-child</loc>', $content);
+        $this->assertContainsTrimmed('<loc>https://luya.io/foo-3/foo-4-child/foo-5-child-child</loc>', $content);
+
+        // check correct language on nested pages
+        $this->assertContainsTrimmed('<loc>https://luya.io/foo-3-de</loc>', $content);
+        $this->assertContainsTrimmed('<loc>https://luya.io/foo-3-de/foo-4-child-de</loc>', $content);
+        $this->assertNotContains('<loc>https://luya.io/foo-3-de/foo-4-child</loc>', $content);
+        $this->assertNotContains('<loc>https://luya.io/foo-3/foo-4-child-de</loc>', $content);
+
         if ($withHidden) {
             // $module->withHidden = true; = 2 Pages in index
             $this->assertContainsTrimmed('<loc>https://luya.io/foo-hidden</loc>', $content);
         } else {
-            $this->assertContainsTrimmed('<loc>https://luya.io/foo-3</loc>', $content);
-            $this->assertContainsTrimmed('<loc>https://luya.io/foo-3/foo-4-child</loc>', $content);
-            $this->assertContainsTrimmed('<loc>https://luya.io/foo-3/foo-4-child/foo-5-child-child</loc>', $content);
             // $module->withHidden = false; = 1 Page in index
             $this->assertNotContains('<loc>https://luya.io/foo-hidden</loc>', $content);
         }
@@ -160,6 +168,24 @@ class SitemapControllerTest extends WebApplicationTestCase
                     'alias' => 'not-to-show-404',
                     'title' => 'Not To Show - 404 - in sitemap',
                 ],
+                'model3de' => [
+                    'id' => 7,
+                    'nav_id' => 3,
+                    'lang_id' => 2,
+                    'timestamp_create' => time(),
+                    'timestamp_update' => time(),
+                    'alias' => 'foo-3-de',
+                    'title' => 'Bar 3 title de',
+                ],
+                'model4de' => [
+                    'id' => 8,
+                    'nav_id' => 4,
+                    'lang_id' => 2,
+                    'timestamp_create' => time(),
+                    'timestamp_update' => time(),
+                    'alias' => 'foo-4-child-de',
+                    'title' => 'Bar 4 child-title de',
+                ],
             ]
         ]));
 
@@ -231,6 +257,13 @@ class SitemapControllerTest extends WebApplicationTestCase
                     'name' => 'English',
                     'short_code' => 'en',
                     'is_default' => 1,
+                    'is_deleted' => 0,
+                ],
+                'model2' => [
+                    'id' => 2,
+                    'name' => 'Deutsch',
+                    'short_code' => 'de',
+                    'is_default' => 0,
                     'is_deleted' => 0,
                 ]
             ]
