@@ -68,12 +68,14 @@ class SitemapController extends Controller
                 $query->andWhere(['is_hidden' => false]);
             }
 
+            $errorPageConfig = Config::findOne(['name' => Config::HTTP_EXCEPTION_NAV_ID]);
+            $errorPageId = $errorPageConfig ? $errorPageConfig->value : null;
+
             foreach ($query->each() as $nav) {
                 /** @var Nav $nav */
 
-                if ((Config::findOne([
-                    'name' => 'httpExceptionNavId',
-                    'value' => $nav->id]))) {
+                // do not include 404 error page
+                if ($errorPageId !== null && $errorPageId == $nav->id) {
                     continue;
                 }
 
