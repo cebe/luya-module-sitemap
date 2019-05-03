@@ -7,10 +7,10 @@ php:
   - '7.3'
   - nightly
 
-matrix:
-  # allow php nightly to fail until https://travis-ci.community/t/php-nightly-now-requires-oniguruma/2237 is fixed
-  allow_failures:
-    - php: nightly
+#matrix:
+#  # allow php nightly to fail
+#  allow_failures:
+#    - php: nightly
 
 install: make install
 script:
