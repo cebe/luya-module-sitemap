@@ -7,6 +7,7 @@
 
 namespace cebe\luya\sitemap\controllers;
 
+use yii\db\Expression;
 use luya\cms\models\Config;
 use Yii;
 use luya\cms\helpers\Url;
@@ -58,13 +59,7 @@ class SitemapController extends Controller
 
         // add luya CMS pages
         if ($this->module->module->hasModule('cms')) {
-
-            // TODO this does not reflect time contraints for publishing items
-            $query = Nav::find()->andWhere([
-                'is_deleted' => false,
-                'is_offline' => false,
-                'is_draft' => false,
-            ])->with(['navItems', 'navItems.lang']);
+            $query = $this->getBasicQuery()->with(['navItems', 'navItems.lang']);
 
             if (!$this->module->withHidden) {
                 $query->andWhere(['is_hidden' => false]);
@@ -131,12 +126,7 @@ class SitemapController extends Controller
         $language = $navItem->lang->short_code;
         $parentNavId = $navItem->nav->attributes['parent_nav_id'];
         while ($parentNavId) {
-            $parentNav = Nav::find()->where([
-                'is_deleted' => false,
-                'is_offline' => false,
-                'is_draft' => false,
-                'id' => $parentNavId,
-            ])->one();
+            $parentNav = $this->getBasicQuery()->andWhere(['id' => $parentNavId])->one();
 
             if (!$parentNav) {
                 break;
@@ -151,5 +141,20 @@ class SitemapController extends Controller
         }
 
         return $fullUriPath;
+    }
+
+    /**
+     * Common query building part
+     * @return \yii\db\ActiveQuery
+     */
+    private function getBasicQuery()
+    {
+        return Nav::find()->where([
+                'is_deleted' => false,
+                'is_offline' => false,
+                'is_draft' => false
+            ])
+            ->andWhere(['or', ['publish_from' => null], ['<=', 'publish_from', new Expression('UNIX_TIMESTAMP()')]])
+            ->andWhere(['or', ['publish_till' => null], ['>=', 'publish_till', new Expression('UNIX_TIMESTAMP()')]]);
     }
 }
