@@ -62,7 +62,6 @@ class DomainSitemapTest extends WebApplicationTestCase
     {
         $module = new Module('sitemap');
         $module->module = $this->app;
-        // $module->withHidden = $withHidden;
 
         $this->prepareBasicTableStructureAndData();
 
