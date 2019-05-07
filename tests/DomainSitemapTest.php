@@ -2,8 +2,8 @@
 
 namespace cebe\luya\sitemap\tests;
 
+use cebe\luya\sitemap\tests\Setup;
 use luya\cms\models\Config;
-use luya\testsuite\cases\WebApplicationTestCase;
 use cebe\luya\sitemap\Module;
 use cebe\luya\sitemap\controllers\SitemapController;
 use luya\testsuite\fixtures\ActiveRecordFixture;
@@ -12,7 +12,7 @@ use luya\cms\models\Nav;
 use luya\admin\models\Lang;
 use yii\helpers\FileHelper;
 
-class DomainSitemapTest extends WebApplicationTestCase
+class DomainSitemapTest extends Setup
 {
     public function getConfigArray()
     {
@@ -37,7 +37,7 @@ class DomainSitemapTest extends WebApplicationTestCase
                     'class' => \luya\admin\components\AdminLanguage::class,
                 ],
                 'composition' => [
-                    'hidden' => false,
+                    'hidden' => true,
                     'default' => ['langShortCode' => 'en'],
                     'hostInfoMapping' => [
                         'http://luya.co.uk' => ['langShortCode' => 'en', 'countryShortCode' => 'uk'],
@@ -47,15 +47,6 @@ class DomainSitemapTest extends WebApplicationTestCase
                 ],
             ]
         ];
-    }
-
-    public function beforeSetup()
-    {
-        parent::beforeSetup();
-        // clean up application runtime directory, do not use cached version of sitemap.xml
-        $runtimePath = dirname(__DIR__) . '/tests/runtime';
-        FileHelper::removeDirectory($runtimePath);
-        FileHelper::createDirectory($runtimePath);
     }
 
     public function testMultipleDomainInSitemap()
@@ -72,9 +63,9 @@ class DomainSitemapTest extends WebApplicationTestCase
         fseek($handle, $begin);
         $content = stream_get_contents($handle);
 
-        $this->assertContainsTrimmed('<loc>http://luya.de/de/foo-de</loc>', $content);
-        $this->assertContainsTrimmed('<loc>http://luya.co.uk/en/foo-en</loc>', $content);
-        $this->assertContainsTrimmed('<loc>http://luya.ru/ru/foo-ru</loc>', $content);
+        $this->assertContainsTrimmed('<loc>http://luya.de/foo-de</loc>', $content);
+        $this->assertContainsTrimmed('<loc>http://luya.co.uk/foo-en</loc>', $content);
+        $this->assertContainsTrimmed('<loc>http://luya.ru/foo-ru</loc>', $content);
     }
 
     private function prepareBasicTableStructureAndData()

@@ -2,8 +2,8 @@
 
 namespace cebe\luya\sitemap\tests;
 
+use cebe\luya\sitemap\tests\Setup;
 use luya\cms\models\Config;
-use luya\testsuite\cases\WebApplicationTestCase;
 use cebe\luya\sitemap\Module;
 use cebe\luya\sitemap\controllers\SitemapController;
 use luya\testsuite\fixtures\ActiveRecordFixture;
@@ -12,7 +12,7 @@ use luya\cms\models\Nav;
 use luya\admin\models\Lang;
 use yii\helpers\FileHelper;
 
-class SitemapControllerTest extends WebApplicationTestCase
+class SitemapControllerTest extends Setup
 {
     public function getConfigArray()
     {
@@ -46,15 +46,6 @@ class SitemapControllerTest extends WebApplicationTestCase
             [true],
             [false],
         ];
-    }
-
-    public function beforeSetup()
-    {
-        parent::beforeSetup();
-        // clean up application runtime directory, do not use cached version of sitemap.xml
-        $runtimePath = dirname(__DIR__) . '/tests/runtime';
-        FileHelper::removeDirectory($runtimePath);
-        FileHelper::createDirectory($runtimePath);
     }
 
     /**
