@@ -44,7 +44,11 @@ class SitemapController extends Controller
 
     private function buildSitemapfile($sitemapFile)
     {
-        $baseUrl = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl;
+        $domain = $this->getDomainForLangIfExists(Yii::$app->composition->langShortCode);
+
+        $host = $domain ?? Yii::$app->request->hostInfo;
+
+        $baseUrl = $host . Yii::$app->request->baseUrl;
 
         // create sitemap
         $sitemap = new Sitemap($sitemapFile, true);
@@ -81,7 +85,10 @@ class SitemapController extends Controller
 
                     $fullUriPath = $this->getRelativeUriByNavItem($navItem, [$errorPageId]);
 
-                    $url = Yii::$app->request->hostInfo
+                    $domain = $this->getDomainForLangIfExists($navItem->lang->short_code);
+                    $host = $domain ?? $host;
+
+                    $url = $host
                         . Yii::$app->menu->buildItemLink($fullUriPath, $navItem->lang->short_code);
 
                     $urls[$navItem->lang->short_code] = $this->module->encodeUrls ? $this->encodeUrl($url) : $url;
@@ -132,10 +139,14 @@ class SitemapController extends Controller
             }
 
             $parentNavItem = $parentNav->getNavItems()->andWhere(['lang_id' => $navItem->lang_id])->one();
-            $alias = $parentNavItem->attributes['alias'];
-            if (!in_array($parentNav->id, $ignoreNavIds)) {
-                $fullUriPath = $alias . '/' . $fullUriPath;
+
+            if ($parentNavItem) {
+                $alias = $parentNavItem->attributes['alias'];
+                if (!in_array($parentNav->id, $ignoreNavIds)) {
+                    $fullUriPath = $alias . '/' . $fullUriPath;
+                }
             }
+
             $parentNavId = $parentNav->attributes['parent_nav_id'];
         }
 
@@ -155,5 +166,21 @@ class SitemapController extends Controller
             ])
             ->andWhere(['or', ['publish_from' => null], ['<=', 'publish_from', time()]])
             ->andWhere(['or', ['publish_till' => null], ['>=', 'publish_till', time()]]);
+    }
+
+    /**
+     * Get Domain For Language If it Exists in composition config
+     * @param  string $lang shortLangCode
+     * @return string|null
+     */
+    private function getDomainForLangIfExists($lang)
+    {
+        // TODO replace by nadar provided function - https://github.com/luyadev/luya/issues/1921
+        foreach (Yii::$app->composition->hostInfoMapping as $domain => $value) {
+            if ($value['langShortCode'] === $lang) {
+                return $domain;
+            }
+        }
+        return null;
     }
 }
