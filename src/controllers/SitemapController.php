@@ -170,6 +170,25 @@ class SitemapController extends Controller
 
     /**
      * Get Domain For Language If it Exists in composition config
+     * Limitation:
+     * For domains with language AND country  specific content;  de-de, de-at, de-ch; en-gb, en-us etc the domain of the first matching `langShortCode`will be considered
+
+     *  For eg
+     *  `Composition::$hostInfoMapping`
+
+     *     ```php
+     *     'hostInfoMapping' => [
+     *         'http://example.us' => ['langShortCode' => 'en', 'countryShortCode' => 'us'],
+     *         'http://example.co.uk' => ['langShortCode' => 'en', 'countryShortCode' => 'uk'],
+     *         'http://example.de' => ['langShortCode' => 'de', 'countryShortCode' => 'de'],
+     *     ],
+     *    ```
+
+     *     sitemap.xml will have link of  `http://example.us` first matching domain for `en` langugae i.e. `langShortCode` and NOT of `http://example.co.uk`
+
+     *  see   PR: https://github.com/cebe/luya-module-sitemap/pull/14
+     *  and test code
+     *
      * @param  string $lang shortLangCode
      * @return string|null
      */
