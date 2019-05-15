@@ -7,6 +7,7 @@
 
 namespace cebe\luya\sitemap\controllers;
 
+use luya\admin\models\Lang;
 use luya\cms\models\Config;
 use Yii;
 use luya\cms\helpers\Url;
@@ -49,6 +50,8 @@ class SitemapController extends Controller
         $host = $domain ?? Yii::$app->request->hostInfo;
 
         $baseUrl = $host . Yii::$app->request->baseUrl;
+
+        $isSingleLanguageSite = Lang::find()->where(['is_deleted' => false])->count() == 1;
 
         // create sitemap
         $sitemap = new Sitemap($sitemapFile, true);
@@ -94,6 +97,11 @@ class SitemapController extends Controller
                     $urls[$navItem->lang->short_code] = $this->module->encodeUrls ? $this->encodeUrl($url) : $url;
                 }
                 $lastModified = $navItem->timestamp_update == 0 ? $navItem->timestamp_create : $navItem->timestamp_update;
+
+                // add single item with out language alternatives on single language site
+                if ($isSingleLanguageSite && count($urls) === 1) {
+                    $urls = reset($urls);
+                }
 
                 $sitemap->addItem($urls, $lastModified);
             }

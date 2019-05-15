@@ -12,7 +12,7 @@ use luya\cms\models\Nav;
 use luya\admin\models\Lang;
 use yii\helpers\FileHelper;
 
-class SitemapControllerTest extends Setup
+class SimpleSitemapTest extends Setup
 {
     public function getConfigArray()
     {
@@ -57,7 +57,7 @@ class SitemapControllerTest extends Setup
         $module->module = $this->app;
         $module->withHidden = $withHidden;
 
-        $this->prepareBasicTableStructureAndData();
+        static::prepareBasicTableStructureAndData();
 
         $ctrl = new SitemapController('sitemap', $module);
         $response = $ctrl->actionIndex();
@@ -104,7 +104,7 @@ class SitemapControllerTest extends Setup
         $this->assertSame('https://japan.com/jp/%E6%96%B0', $this->invokeMethod($ctrl, 'encodeUrl', ['https://japan.com/jp/新']));
     }
 
-    private function prepareBasicTableStructureAndData()
+    public static function prepareBasicTableStructureAndData()
     {
         $navItemFixture = (new ActiveRecordFixture([
             'modelClass' => NavItem::class,
