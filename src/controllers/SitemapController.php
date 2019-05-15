@@ -194,7 +194,13 @@ class SitemapController extends Controller
      */
     private function getDomainForLangIfExists($lang)
     {
-        // TODO replace by nadar provided function - https://github.com/luyadev/luya/issues/1921
+        // method available since luya version 1.0.18
+        // https://github.com/luyadev/luya/issues/1921
+        if (method_exists(Yii::$app->composition, 'resolveHostInfo')) {
+            return Yii::$app->composition->resolveHostInfo($lang) ?: null;
+        }
+
+        // Fallback implementation
         foreach (Yii::$app->composition->hostInfoMapping as $domain => $value) {
             if ($value['langShortCode'] === $lang) {
                 return $domain;
