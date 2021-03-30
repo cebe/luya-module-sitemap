@@ -85,7 +85,9 @@ class SitemapController extends Controller
                 $urls = [];
                 foreach ($nav->navItems as $navItem) {
                     /** @var NavItem $navItem */
-                    if (!$navItem->lang) continue;
+                    if (!$navItem->lang) {
+                        continue;
+                    }
                     
                     $fullUriPath = $this->getRelativeUriByNavItem($navItem, [$errorPageId]);
 
