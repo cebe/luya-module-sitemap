@@ -28,7 +28,7 @@ interface SitemapLinkInterface
      *
      * @return SitemapLinkInterface[]
      */
-    public function linksIterator () : array;
+    public function linksIterator() : array;
 
     /**
      * An example of link to the model view page would be :
