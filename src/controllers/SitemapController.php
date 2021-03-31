@@ -132,7 +132,7 @@ class SitemapController extends Controller
             return $lastChange;
         }
         foreach ($this->module->linkInterfaceLookup as $externalLinkInterface) {
-            foreach ($this->getExternalLinkInterfaceObject($externalLinkInterface)->iteratorLinks() as $externalLink) {
+            foreach ($this->getExternalLinkInterfaceObject($externalLinkInterface)->linksIterator() as $externalLink) {
                 $lastChange[] = $externalLink->getLastModificationTimestamp();
             }
         }
@@ -150,9 +150,10 @@ class SitemapController extends Controller
             return;
         }
         foreach ($this->module->linkInterfaceLookup as $externalLinkInterface) {
-            foreach ($this->getExternalLinkInterfaceObject($externalLinkInterface)->iteratorLinks() as $externalLink) {
+            foreach ($this->getExternalLinkInterfaceObject($externalLinkInterface)->linksIterator() as $externalLink) {
                 /** @var SitemapLinkInterface $externalLink */
-                list($url, $lastModified) = $externalLink->linkGetUrl();
+                $url = $externalLink->linkUrl();
+                $lastModified = $externalLink->linkUpdatedTimestamp();
                 $sitemap->addItem($url, $lastModified);
             }
         }
@@ -172,12 +173,31 @@ class SitemapController extends Controller
         }
 
         $externalLinkInterfaceObject = new $externalLinkInterface;
-        if (! $externalLinkInterfaceObject instanceof SitemapLinkInterface) {
+        if (!($externalLinkInterfaceObject instanceof SitemapLinkInterface)) {
             throw new InvalidConfigException("Wrong sitemap module configuration: $externalLinkInterface is not implementing SitemapLinkInterface");
         }
+
+        $this->assertLinksItoratorReturnedObject($externalLinkInterfaceObject);
+
         return $externalLinkInterfaceObject;
     }
 
+    /**
+     * Asserts that the external interface object `linksIterator()` method is returning
+     * an array of SitemapLinkInterface
+     * @param SitemapLinkInterface $externalLinkInterfaceObject
+     * @throws InvalidConfigException
+     */
+    private function assertLinksItoratorReturnedObject($externalLinkInterfaceObject)
+    {
+        $links = $externalLinkInterfaceObject->linksIterator();
+        if (!empty($links)) {
+            $entry = array_pop($links);
+            if (!($entry instanceof SitemapLinkInterface)) {
+                throw new InvalidConfigException(sprintf("External interface %s::linksIterator() should return an array of SitemapLinkInterface objects", get_class($externalLinkInterfaceObject)));
+            }
+        }
+    }
     /**
      * Encode an URL by using rawurlencode().
      *

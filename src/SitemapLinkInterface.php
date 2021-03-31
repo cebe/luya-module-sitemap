@@ -21,14 +21,14 @@ interface SitemapLinkInterface
      * to run the find() method
      * A simple implentation to get all model item would be :
      * ```php
-     * public function iteratorLinks(){
+     * public function linksIterator (){
      *    return self::find()->all();
      * }
      * ```
      *
-     * @return SitemapLinkInterface.
+     * @return SitemapLinkInterface[]
      */
-    public function iteratorLinks();
+    public function linksIterator () : array;
 
     /**
      * An example of link to the model view page would be :
@@ -42,15 +42,35 @@ interface SitemapLinkInterface
      * }
      * ```
      *
-     * @return array Full URL of the link as first entry and the last
+     * @return string  Full URL of the link as first entry and the last
      * modification timestamp as second entry
      */
-    public function linkGetUrl();
-    
+    public function linkUrl() : string;
+
+    /**
+     * An example of link to the model view page would be :
+     * ```php
+     * public function linkUrl(){
+     *   $absoluteBaseUrl = Url::base(true);
+     *   return $absoluteBaseUrl. Url::toModuleRoute('mymodulefrontend', ['/mumodulefrontend/sample/view', 'id' => $this->id]);
+     * }
+     * ```
+     *
+     * @return int the link last modification timestamp
+     */
+    public function linkUpdatedTimestamp() : int;
+
     /**
      * Used to know whether to forece sitemap re-build  or not
      *
-     * Example of returning a model max between last update and created timestamp
+     * Example of returning a model last updated_at timestamp
+     *
+     * ```php
+     *public function getLastModificationTimestamp() {
+     *   return self::find()->max('updated_at');
+     *}
+     * ```
+     *or the max between last update and created timestamps
      * ```php
      *public function getLastModificationTimestamp() {
      *   return max(self::find()->select(['MAX(created_at) as tc', 'MAX(updated_at) as tu'])->asArray()->one());
@@ -65,5 +85,5 @@ interface SitemapLinkInterface
      * ```
      * @return int the last modification timestamp
      */
-    public function getLastModificationTimestamp();
+    public function getLastModificationTimestamp() : int;
 }
