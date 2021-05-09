@@ -1,9 +1,8 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @copyright Copyright (c) 2019 Carsten Brandt <mail@cebe.cc> and contributors
+ * @license https://github.com/cebe/luya-module-sitemap/blob/master/LICENSE.md
  */
 
 namespace cebe\luya\sitemap;
