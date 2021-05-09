@@ -12,7 +12,7 @@ namespace cebe\luya\sitemap;
  * Description of SitemapLinkInterface
  *
  * @author Rochdi Bazine
- * @since 1.2.1?
+ * @since 1.3.0
  */
 interface SitemapLinkInterface
 {
