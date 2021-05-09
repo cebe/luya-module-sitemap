@@ -28,4 +28,11 @@ final class Module extends \luya\base\Module implements CoreModuleInterface
      * @see https://www.sitemaps.org/protocol.html#escaping
      */
     public $encodeUrls = true;
+
+    /**
+    * @var array  The list of link classes implementing the SitemapLinkInterface
+    * for extra sitemap links
+    * @since 1.2.1?
+    */
+    public $linkInterfaceLookup = [];
 }

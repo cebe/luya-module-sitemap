@@ -15,6 +15,9 @@ use luya\cms\models\Nav;
 use luya\cms\models\NavItem;
 use luya\web\Controller;
 use samdark\sitemap\Sitemap;
+use cebe\luya\sitemap\SitemapLinkInterface;
+use yii\base\InvalidConfigException;
+use luya\helpers\ArrayHelper;
 
 /**
  * Controller provides sitemap.xml
@@ -30,8 +33,8 @@ class SitemapController extends Controller
     {
         $sitemapFile = Yii::getAlias('@runtime/sitemap.xml');
 
-        // update sitemap file as soon as CMS structure changes
-        $lastCmsChange = max(NavItem::find()->select(['MAX(timestamp_create) as tc', 'MAX(timestamp_update) as tu'])->asArray()->one());
+        // update sitemap file as soon as CMS structure changes or external items changed
+        $lastCmsChange = max(ArrayHelper::merge($this->getExternalItemsChangeTimestamp(), NavItem::find()->select(['MAX(timestamp_create) as tc', 'MAX(timestamp_update) as tu'])->asArray()->one()));
 
         if (!file_exists($sitemapFile) || filemtime($sitemapFile) < $lastCmsChange) {
             $this->buildSitemapfile($sitemapFile);
@@ -110,11 +113,91 @@ class SitemapController extends Controller
             }
         }
 
+        $this->lookupExternalItems($sitemap);
+
         // write sitemap files
         $sitemap->write();
     }
 
+    /**
+     * Loop over defined external interfaces and return last change timestamp
+     * Used to decide whether to rebuild sitemap or not
+     * @return array List of external interfaces change timestamps
+     */
+    private function getExternalItemsChangeTimestamp()
+    {
+        $lastChange = [];
 
+        if (empty($this->module->linkInterfaceLookup)) {
+            return $lastChange;
+        }
+        foreach ($this->module->linkInterfaceLookup as $externalLinkInterface) {
+            foreach ($this->getExternalLinkInterfaceObject($externalLinkInterface)->linksIterator() as $externalLink) {
+                $lastChange[] = $externalLink->getLastModificationTimestamp();
+            }
+        }
+        return $lastChange;
+    }
+
+    /**
+     * Lookup defined link interfaces for extra items and add them to the sitemap
+     * @param samdark\sitemap\Sitemap $sitemap The sitemap object
+     * @since 1.2.1?
+     */
+    private function lookupExternalItems($sitemap)
+    {
+        if (empty($this->module->linkInterfaceLookup)) {
+            return;
+        }
+        foreach ($this->module->linkInterfaceLookup as $externalLinkInterface) {
+            foreach ($this->getExternalLinkInterfaceObject($externalLinkInterface)->linksIterator() as $externalLink) {
+                /** @var SitemapLinkInterface $externalLink */
+                $url = $externalLink->linkUrl();
+                $lastModified = $externalLink->linkUpdatedTimestamp();
+                $sitemap->addItem($url, $lastModified);
+            }
+        }
+    }
+
+    /**
+     * Checks whether a given external link configuration is valid or not and returns
+     * and instance of the external link object if ok
+     * @param string $externalLinkInterface
+     * @return SitemapLinkInterface
+     * @throws InvalidConfigException
+     */
+    private function getExternalLinkInterfaceObject($externalLinkInterface)
+    {
+        if (!class_exists($externalLinkInterface)) {
+            throw new InvalidConfigException("Wrong sitemap module configuration: $externalLinkInterface is not found");
+        }
+
+        $externalLinkInterfaceObject = new $externalLinkInterface;
+        if (!($externalLinkInterfaceObject instanceof SitemapLinkInterface)) {
+            throw new InvalidConfigException("Wrong sitemap module configuration: $externalLinkInterface is not implementing SitemapLinkInterface");
+        }
+
+        $this->assertLinksItoratorReturnedObject($externalLinkInterfaceObject);
+
+        return $externalLinkInterfaceObject;
+    }
+
+    /**
+     * Asserts that the external interface object `linksIterator()` method is returning
+     * an array of SitemapLinkInterface
+     * @param SitemapLinkInterface $externalLinkInterfaceObject
+     * @throws InvalidConfigException
+     */
+    private function assertLinksItoratorReturnedObject($externalLinkInterfaceObject)
+    {
+        $links = $externalLinkInterfaceObject->linksIterator();
+        if (!empty($links)) {
+            $entry = array_pop($links);
+            if (!($entry instanceof SitemapLinkInterface)) {
+                throw new InvalidConfigException(sprintf("External interface %s::linksIterator() should return an array of SitemapLinkInterface objects", get_class($externalLinkInterfaceObject)));
+            }
+        }
+    }
     /**
      * Encode an URL by using rawurlencode().
      *
