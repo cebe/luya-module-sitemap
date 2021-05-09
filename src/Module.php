@@ -32,7 +32,7 @@ final class Module extends \luya\base\Module implements CoreModuleInterface
     /**
     * @var array  The list of link classes implementing the SitemapLinkInterface
     * for extra sitemap links
-    * @since 1.2.1?
+    * @since 1.3.0
     */
     public $linkInterfaceLookup = [];
 }
